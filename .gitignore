@@ -1,0 +1,26 @@
+index.php
+.vscode/sftp.json
+DataBaseConnect/cron.php
+DataBaseConnect/robot2.php
+DB CONNECT/01-conn INSERT .php
+DataBaseConnect/robot4.php
+DB CONNECT/config.php
+hook/bot5.php
+DB CONNECT/03-conn DELETE.php
+DataBaseConnect/robot3.php
+DataBaseConnect/robot5.php
+hook/bot4.php
+hook/bot3.php
+hook/bot2.php
+.gitignore
+hook/bot.php
+hook/bot6.php
+DB CONNECT/05-conn SELECT.php
+DB CONNECT/02-conn UPDATE.php
+hook/set.php
+php.ini
+DataBaseConnect/DBconfig.php
+DataBaseConnect/robot.php
+DataBaseConnect/functions.php
+DataBaseConnect/robot6.php
+hook/bot7.php
