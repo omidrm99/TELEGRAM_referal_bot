@@ -2,6 +2,7 @@
 
 const API = '7536953878:AAGm-lCk8BN6Ksc8FyvjQbh9zD21LYImtdw';
 include("DBconfig.php");
+include("jdf.php");
 
 
 function bot(string $method, array $params): bool|string
@@ -17,7 +18,7 @@ function bot(string $method, array $params): bool|string
     curl_close($ch);
     return $data;
 }
-function sendMessage(int|string $chat_id, string $text, String $parse_mode = null, int $message_thread_id = null, array $entities = null, mixed $link_preview_options = null, bool $disable_notification = null, bool $protect_content = null, bool $allow_paid_broadcast = null, string $message_effect_id = null, mixed $reply_parameters = null, mixed $reply_markup = null)
+function sendMessage(int|string $chat_id, string $text, String $parse_mode = null, int $message_thread_id = null, array $entities = null, mixed $link_preview_options = null, bool $disable_notification = null, bool $protect_content = null, bool $allow_paid_broadcast = null, string $message_effect_id = null, mixed $reply_parameters = null, mixed $reply_markup = null): bool|string
 {
     $params = [
         'chat_id' => $chat_id,
@@ -49,4 +50,24 @@ function debug(mixed $data): void
     $admin = 207850708;
     $printData = print_r($data, true);
     sendMessage($admin, $printData);
+    die;
+}
+function convertToEnglishNumbers(string $text): string
+{
+    $persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    $arabic = ['٩', '٨', '٧', '٦', '٥', '٤', '٣', '٢', '١', '٠'];
+    $english = range(0, 9);
+    $converted_persian_numbers = str_replace($persian, $english, $text);
+    $converted_arabic_numbers = str_replace($arabic, $english, $converted_persian_numbers);
+    return $converted_arabic_numbers;
+}
+function convertDateToJalali(string $date, $format = "Y-m-d H:i:s"): string
+{
+    $dateTime = DateTime::createFromFormat('Y-m-d H:i:s', $date);
+    if (!$dateTime || $dateTime->format('Y-m-d H:i:s') !== $date) {
+        throw new InvalidArgumentException("Invalid date format. Expected 'Y-m-d H:i:s'.");
+    }
+
+    $timestamp = $dateTime->getTimestamp();
+    return convertToEnglishNumbers(jdate(format: $format, timestamp: $timestamp, time_zone: 'Asia/Tehran'));
 }
