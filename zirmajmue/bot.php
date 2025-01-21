@@ -41,8 +41,9 @@ if ($text == '/start') {
         $prepare->execute();
         $prepare->close();
     }
+    setStep('home');
     $msg = 'سلام خوش اومدی !☀️';
-    sendMessage($from_id, $msg);
+    sendMessage($from_id, $msg, reply_markup: $keyboard_home);
     die;
 }
 
