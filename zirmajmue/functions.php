@@ -50,7 +50,6 @@ function debug(mixed $data): void
     $admin = 207850708;
     $printData = print_r($data, true);
     sendMessage($admin, $printData);
-    die;
 }
 function convertToEnglishNumbers(string $text): string
 {
