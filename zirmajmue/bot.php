@@ -3,7 +3,7 @@
 require "functions.php";
 require "config.php";
 // require "jdf.php";
-// require "keyboards.php";
+require "keyboards.php";
 
 
 
@@ -24,6 +24,30 @@ if (array_key_exists(key: 'message', array: $update)) {
     $user = $db->query("SELECT * FROM `users` WHERE `user_id` = $from_id")->fetch_object();
 }
 
-debug($user->step);
 
- 
+
+if ($chat_type != 'private') {
+    die;
+}
+
+
+
+if ($text == '/start') {
+    if (! isset($user)) {
+        $random_str = generateRandomString();
+        $sql = "INSERT INTO `omidreza_zirmajmue`.`users` (`user_id`, `referal_code`) VALUES (?,?)";
+        $prepare = $db->prepare($sql);
+        $prepare->bind_param('is', $from_id, $random_str);
+        $prepare->execute();
+        $prepare->close();
+    }
+    $msg = 'سلام خوش اومدی !☀️';
+    sendMessage($from_id, $msg);
+    die;
+}
+
+$step = $user->step;
+
+if ($step == 'home') {
+    sendMessage($from_id, 'hi', reply_markup: $keyboard_home);
+}
