@@ -18,7 +18,7 @@ if (array_key_exists(key: 'message', array: $update)) {
     $message_id = $message['message_id'];
     $from_id = $message['from']['id'];
     $first_name = $message['from']['first_name'];
-    $user_name = $message['from']['user_name'];
+    $user_name = $message['chat']['username'];
     $chat_type = $message['chat']['type'];
     $date = $message['date'];
     $user = $db->query("SELECT * FROM `users` WHERE `user_id` = $from_id")->fetch_object();
@@ -31,10 +31,40 @@ if ($chat_type != 'private') {
 }
 
 if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
-    $sql1 = "UPDATE `users` SET `referals` = `referals` + 1 WHERE `referal_code` = '{$match[2]}'";
-    $sql2 = "UPDATE `users` SET `wallet` = `wallet` + 1 WHERE `referal_code` = '{$match[2]}'";
-    $db->query($sql1);
-    $db->query($sql2);
+    $user_referal_code = $match[2];
+    if (! isset($user)) {
+
+        // ADD USER TO DB
+        $random_str = generateRandomString();
+        $sql1 = "INSERT INTO `omidreza_zirmajmue`.`users` (`user_id`, `referal_code`) VALUES (?,?)";
+        $prepare = $db->prepare($sql1);
+        $prepare->bind_param('is', $from_id, $random_str);
+        $prepare->execute();
+        $prepare->close();
+
+        // UPDATE & ADD REFERAL
+        $sql2 = "UPDATE `users` SET `referals` = `referals` + 1 WHERE `referal_code` = '{$user_referal_code}'";
+        $db->query($sql2);
+
+        // SENDMESSAGE TO CALLER
+        $sql3 = "SELECT `user_id` FROM `users` WHERE `referal_code` = '{$user_referal_code}'";
+        $user_invite_id = $db->query($sql3)->fetch_object()->user_id;
+        $msg2 = "یک نفر رقرال گرفتی\n" .
+            "آیدی عددیش : `{$from_id}`\n" .
+            "یوزر نیم : `@{$user_name}`\n" .
+            "اسمش : `{$first_name}`";
+        sendMessage($user_invite_id, $msg2, parse_mode: 'Markdown');
+    }
+
+
+    $msg1 = 'سلام خوشششش اومدید';
+    sendMessage($from_id, $msg1);
+
+
+
+
+    // $sql2 = "UPDATE `users` SET `wallet` = `wallet` + 1 WHERE `referal_code` = '{$match[2]}'";
+    // $db->query($sql2);
 }
 
 if ($text == '/start') {
@@ -45,9 +75,11 @@ if ($text == '/start') {
         $prepare->bind_param('is', $from_id, $random_str);
         $prepare->execute();
         $prepare->close();
+        $msg = 'سلام خوش اومدی ! 🌚';
+        sendMessage($from_id, $msg);
     }
     setStep('home');
-    $msg = 'سلام خوش اومدی !☀️';
+    $msg = 'سلام خوش برگشتی !☀️';
     sendMessage($from_id, $msg, reply_markup: $keyboard_home);
     die;
 }
@@ -55,5 +87,7 @@ if ($text == '/start') {
 $step = $user->step;
 
 if ($step == 'home') {
-    sendMessage($from_id, 'hi', reply_markup: $keyboard_home);
+    $msg = '☠️بیا کارت دارم☠️';
+    sendMessage($from_id, $msg, reply_markup: $keyboard_home);
+    die;
 }
