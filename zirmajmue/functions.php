@@ -71,3 +71,16 @@ function convertDateToJalali(string $date, $format = "Y-m-d H:i:s"): string
     $timestamp = $dateTime->getTimestamp();
     return convertToEnglishNumbers(jdate(format: $format, timestamp: $timestamp, time_zone: 'Asia/Tehran'));
 }
+function generateRandomString(): string
+{
+    $min = 6;
+    $max = 10;
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $length = random_int($min, $max);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $index = random_int(0, strlen($characters) - 1);
+        $randomString .= $characters[$index];
+    }
+    return $randomString;
+}
