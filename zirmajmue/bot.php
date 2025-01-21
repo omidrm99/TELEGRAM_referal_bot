@@ -30,7 +30,10 @@ if ($chat_type != 'private') {
     die;
 }
 
-
+if(preg_match(pattern: '/^(\/start) inv_(.*)/', subject: $text, matches: $match)) {
+    debug($match);
+    die;
+}
 
 if ($text == '/start') {
     if (! isset($user)) {
