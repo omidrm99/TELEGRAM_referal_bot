@@ -73,8 +73,8 @@ function convertDateToJalali(string $date, $format = "Y-m-d H:i:s"): string
 }
 function generateRandomString(): string
 {
-    $min = 6;
-    $max = 10;
+    $min = 10;
+    $max = 15;
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $length = random_int($min, $max);
     $randomString = '';
