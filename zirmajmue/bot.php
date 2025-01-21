@@ -30,9 +30,11 @@ if ($chat_type != 'private') {
     die;
 }
 
-if(preg_match(pattern: '/^(\/start) inv_(.*)/', subject: $text, matches: $match)) {
-    debug($match);
-    die;
+if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
+    $sql1 = "UPDATE `users` SET `referals` = `referals` + 1 WHERE `referal_code` = '{$match[2]}'";
+    $sql2 = "UPDATE `users` SET `wallet` = `wallet` + 1 WHERE `referal_code` = '{$match[2]}'";
+    $db->query($sql1);
+    $db->query($sql2);
 }
 
 if ($text == '/start') {
