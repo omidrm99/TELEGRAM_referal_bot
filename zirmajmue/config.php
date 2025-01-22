@@ -14,6 +14,7 @@ date_default_timezone_set("Asia/Tehran");
 //     'request' => -0,
 // ];
 
+$wallet_add = 0.2;
 
 const DATABASE_HOSTNAME = 'localhost';
 const DATABASE_USERNAME = 'omidreza_omidreza';

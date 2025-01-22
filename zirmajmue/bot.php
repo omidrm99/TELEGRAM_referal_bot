@@ -43,7 +43,10 @@ if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
         $prepare->close();
 
         // UPDATE & ADD REFERAL
-        $sql2 = "UPDATE `users` SET `referals` = `referals` + 1 WHERE `referal_code` = '{$user_referal_code}'";
+        $sql2 = "UPDATE
+        `users` SET `referals` = `referals` + 1,
+        `wallet` = `wallet` + {$wallet_add}
+        WHERE `referal_code` = '{$user_referal_code}'";
         $db->query($sql2);
 
         // send message TO (INVITER)
