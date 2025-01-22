@@ -34,7 +34,7 @@ if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
     $user_referal_code = $match[2];
     if (! isset($user)) {
 
-        // ADD USER TO DB
+        // ADD NEW USER TO DB
         $random_str = generateRandomString();
         $sql1 = "INSERT INTO `omidreza_zirmajmue`.`users` (`user_id`, `referal_code`) VALUES (?,?)";
         $prepare = $db->prepare($sql1);
@@ -46,25 +46,26 @@ if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
         $sql2 = "UPDATE `users` SET `referals` = `referals` + 1 WHERE `referal_code` = '{$user_referal_code}'";
         $db->query($sql2);
 
-        // SENDMESSAGE TO CALLER
+        // send message TO (INVITER)
         $sql3 = "SELECT `user_id` FROM `users` WHERE `referal_code` = '{$user_referal_code}'";
-        $user_invite_id = $db->query($sql3)->fetch_object()->user_id;
-        $msg2 = "یک نفر رقرال گرفتی\n" .
+        $user_invite_data = $db->query($sql3);
+        $user_invite_id = $user_invite_data->fetch_object()->user_id;
+        $user_invite_referals = $user_invite_data->fetch_object()->referals;
+        $user_invite_wallet = $user_invite_data->fetch_object()->wallet;
+
+
+
+
+        $msg2 = "🥂یک نفر رقرال گرفتی\n" .
             "آیدی عددیش : `{$from_id}`\n" .
-            "یوزر نیم : `@{$user_name}`\n" .
+            "یوزر نیم : @{$user_name}\n" .
             "اسمش : `{$first_name}`";
         sendMessage($user_invite_id, $msg2, parse_mode: 'Markdown');
     }
 
-
+    //send message to invited (NEW) user
     $msg1 = 'سلام خوشششش اومدید';
     sendMessage($from_id, $msg1);
-
-
-
-
-    // $sql2 = "UPDATE `users` SET `wallet` = `wallet` + 1 WHERE `referal_code` = '{$match[2]}'";
-    // $db->query($sql2);
 }
 
 if ($text == '/start') {
@@ -78,8 +79,10 @@ if ($text == '/start') {
         $msg = 'سلام خوش اومدی ! 🌚';
         sendMessage($from_id, $msg);
     }
+
+    //send message to new user
     setStep('home');
-    $msg = 'سلام خوش برگشتی !☀️';
+    $msg = 'به ربات رفرال خوش آمدید 🌟';
     sendMessage($from_id, $msg, reply_markup: $keyboard_home);
     die;
 }
