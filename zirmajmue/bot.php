@@ -64,15 +64,19 @@ if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
             "یوزر نیم : @{$user_name}\n" .
             "اسمش : `{$first_name}`";
         sendMessage($user_invite_id, $msg2, parse_mode: 'Markdown');
+        die;
     }
 
     //send message to invited (NEW) user
     $msg1 = 'سلام خوشششش اومدید';
     sendMessage($from_id, $msg1);
+    die;
 }
 
-if ($text == '/start') {
+
+if (preg_match('/\/start/', $text, $match)) {
     if (! isset($user)) {
+        // ADD NEW USER TO DB
         $random_str = generateRandomString();
         $sql = "INSERT INTO `omidreza_zirmajmue`.`users` (`user_id`, `referal_code`) VALUES (?,?)";
         $prepare = $db->prepare($sql);
@@ -83,12 +87,13 @@ if ($text == '/start') {
         sendMessage($from_id, $msg);
     }
 
-    //send message to new user
+    //send message to new (NOT INVITED) user
     setStep('home');
     $msg = 'به ربات رفرال خوش آمدید 🌟';
     sendMessage($from_id, $msg, reply_markup: $keyboard_home);
     die;
 }
+
 
 $step = $user->step;
 

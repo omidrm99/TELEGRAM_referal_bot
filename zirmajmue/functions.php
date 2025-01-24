@@ -1,8 +1,8 @@
 <?php
 
 const API = '7536953878:AAGm-lCk8BN6Ksc8FyvjQbh9zD21LYImtdw';
-include("DBconfig.php");
-include("jdf.php");
+require "DBconfig.php";
+require "jdf.php";
 
 
 function bot(string $method, array $params): bool|string
