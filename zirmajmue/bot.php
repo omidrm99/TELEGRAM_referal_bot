@@ -5,12 +5,8 @@ require "config.php";
 // require "jdf.php";
 require "keyboards.php";
 
-
-
-
 $input = file_get_contents("php://input");
 $update = json_decode($input, true);
-
 
 if (array_key_exists(key: 'message', array: $update)) {
     $message = $update['message'];
@@ -27,8 +23,7 @@ if ($chat_type != 'private') {
     die;
 }
 if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
-    if (! isset($user)) {
-
+    if (!isset($user)) {
         // ADD NEW USER TO DB
         $random_str = generateRandomString();
         $sql1 = "INSERT INTO `omidreza_zirmajmue`.`users` (`user_id`, `referal_code`) VALUES (?,?)";
@@ -37,26 +32,16 @@ if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
         $prepare->execute();
         $prepare->close();
 
-
-
         $user_referal_code = $match[2];
-
         $sql = "SELECT * FROM `users` WHERE `referal_code` = '{$user_referal_code}'";
         $user_inviter_data = $db->query($sql)->fetch_object();
     }
 
-
     // check referal code
     if (isset($user_inviter_data->user_id)) {
-
         // UPDATE & ADD REFERAL
-        $sql2 = "UPDATE
-            `users` SET `referals` = `referals` + 1,
-            `wallet` = `wallet` + {$wallet_add},
-            `last_referal_id` = {$from_id}
-            WHERE `referal_code` = '{$user_referal_code}'";
+        $sql2 = "UPDATE `users` SET `referals` = `referals` + 1, `wallet` = `wallet` + {$wallet_add}, `last_referal_id` = {$from_id} WHERE `referal_code` = '{$user_referal_code}'";
         $db->query($sql2);
-
 
         // send message TO (INVITER)
         $user_inviter_id = $user_inviter_data->user_id;
@@ -69,16 +54,11 @@ if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
 موجودی حساب شما : {$user_inviter_wallet} تتر";
         sendMessage($user_inviter_id, $msg1);
 
-
-
-
         $sql3 = "INSERT INTO `omidreza_zirmajmue`.`referals` (`inviter_user_id`, `invited_user_id`) VALUES (?,?)";
         $prepare = $db->prepare($sql3);
         $prepare->bind_param('ii', $user_inviter_id, $from_id);
         $prepare->execute();
         $prepare->close();
-
-
 
         $msg2 = 'سلام خوششششششششششششششش اومدید';
         sendMessage($from_id, $msg2);
@@ -90,7 +70,7 @@ if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
     die;
 }
 if (preg_match('/\/start/', $text, $match)) {
-    if (! isset($user)) {
+    if (!isset($user)) {
         // ADD NEW USER TO DB
         $random_str = generateRandomString();
         $sql = "INSERT INTO `omidreza_zirmajmue`.`users` (`user_id`, `referal_code`) VALUES (?,?)";
@@ -110,37 +90,36 @@ if (preg_match('/\/start/', $text, $match)) {
     die;
 }
 
-
-
-
 $user = $db->query("SELECT * FROM `users` WHERE `user_id` = $from_id")->fetch_object();
 $step = $user->step;
 
 if ($step == 'home') {
-
     if ($text == '💡 راهنمای ربات') {
         $msg = 'محل قرار گیری راهنمای ربات';
         sendMessage($from_id, $msg, reply_markup: $keyboard_home);
-
-
-
         die;
     }
     if ($text == '⁉️ سوالات متداول') {
         $msg = 'محل قرار گیری سوالات متداول ربات';
         sendMessage($from_id, $msg, reply_markup: $keyboard_home);
-
-
         die;
     }
     if ($text == '🔐 حساب کاربری') {
-        debug($text);
+        $wallet = $user->wallet;
+        setStep('account');
+        $msg = "🔐 اطلاعات حساب شما : 
+
+🔶 تعداد زیر مجموعه : {$from_id}
+🔶 موجودی حساب : {$wallet}
+
+🔱 با استفاده از دکمه ( برداشت وجه ) میتوانید موجودی حساب خود را برداشت بکنید.
+
+@zirmajmuebot";
+        sendMessage($from_id, $msg, reply_markup: $keyboard_account);
         die;
     }
     if ($text == '💬 پشتیبانی') {
         setStep('support');
-
-
         $msg = "🔶 پیام خود را وارد کنید : 
 
 🟥 پیام های شما تا 24 ساعت جواب داده میشوند
@@ -148,11 +127,7 @@ if ($step == 'home') {
 
 ⚠️ پشتیبانی مستقیم :
 {$support_bot[0]}";
-
         sendMessage($from_id, $msg, reply_markup: $keyboard_back);
-
-
-
         die;
     }
     if ($text == '⭐️ زیرمجموعه گیری') {
@@ -165,7 +140,14 @@ if ($step == 'home') {
     sendMessage($from_id, $msg, reply_markup: $keyboard_home);
     die;
 }
-
+if ($step == 'account') {
+    if ($text == '🔙 بازگشت') {
+        $msg = 'منوی اصلی';
+        sendMessage($from_id, $msg, reply_markup: $keyboard_home);
+        setStep('home');
+        die;
+    }
+}
 if ($step == 'support') {
     if ($text == '🔙 بازگشت') {
         $msg = 'منوی اصلی';
@@ -173,24 +155,17 @@ if ($step == 'support') {
         setStep('home');
         die;
     }
-
     if (isset($text) && $text != '') {
         $msg = 'پیام شما با موفقیت ارسال شد';
         sendMessage($from_id, $msg, reply_markup: $keyboard_home);
 
-
-
-
         $msg2 = "🔻#پشتیبانی 
 
-
-    - آیدی عددی کاربر : {$from_id}
-    - نام کاربر : {$first_name}
-    - آیدی کاربر : @{$user_name}
-    - متن پیام : {$text}";
-
+- آیدی عددی کاربر : {$from_id}
+- نام کاربر : {$first_name}
+- آیدی کاربر : @{$user_name}
+- متن پیام : {$text}";
         sendMessage($bot_admins[0], $msg2, reply_markup: $keyboard_home);
-
         setStep('home');
         die;
     }
