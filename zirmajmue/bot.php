@@ -56,7 +56,8 @@ if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
         // UPDATE & ADD REFERAL
         $sql2 = "UPDATE
             `users` SET `referals` = `referals` + 1,
-            `wallet` = `wallet` + {$wallet_add}
+            `wallet` = `wallet` + {$wallet_add},
+            `last_referal_id` = {$from_id}
             WHERE `referal_code` = '{$user_referal_code}'";
         $db->query($sql2);
 
