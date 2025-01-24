@@ -160,12 +160,22 @@ if ($step == 'home') {
         die;
     }
 
-
-
-
-
     $msg = '❌ دستور مورد نظر یافت نشد 
 لطفا از کیبور استفاده بکنید';
     sendMessage($from_id, $msg, reply_markup: $keyboard_home);
+    die;
+}
+
+if ($step == 'support') {
+    if ($text == '🔙 بازگشت') {
+        $msg = 'منوی اصلی';
+        sendMessage($from_id, $msg, reply_markup: $keyboard_home);
+        setStep('home');
+        die;
+    }
+    
+    $msg = '❌ دستور مورد نظر یافت نشد 
+لطفا از کیبور استفاده بکنید';
+    sendMessage($from_id, $msg, reply_markup: $keyboard_back);
     die;
 }
