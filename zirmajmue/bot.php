@@ -105,7 +105,7 @@ if (preg_match('/\/start/', $text, $match)) {
 
     //send message to new (NOT INVITED) user
     setStep('home');
-    $msg = 'به ربات رفرال خوش آمدید 🌟';
+    $msg = 'به ربات رفرال خوش برگشتی 🌟';
     sendMessage($from_id, $msg, reply_markup: $keyboard_home);
     die;
 }
@@ -141,13 +141,13 @@ if ($step == 'home') {
         setStep('support');
 
 
-
         $msg = "🔶 پیام خود را وارد کنید : 
 
 🟥 پیام های شما تا 24 ساعت جواب داده میشوند
+- پیام خود را بنویسید و ارسال بکنید
 
 ⚠️ پشتیبانی مستقیم :
-{$support_bot}";
+{$support_bot[0]}";
 
         sendMessage($from_id, $msg, reply_markup: $keyboard_back);
 
@@ -173,9 +173,25 @@ if ($step == 'support') {
         setStep('home');
         die;
     }
-    
-    $msg = '❌ دستور مورد نظر یافت نشد 
-لطفا از کیبور استفاده بکنید';
-    sendMessage($from_id, $msg, reply_markup: $keyboard_back);
-    die;
+
+    if (isset($text) && $text != '') {
+        $msg = 'پیام شما با موفقیت ارسال شد';
+        sendMessage($from_id, $msg, reply_markup: $keyboard_home);
+
+
+
+
+        $msg2 = "🔻#پشتیبانی 
+
+
+    - آیدی عددی کاربر : {$from_id}
+    - نام کاربر : {$first_name}
+    - آیدی کاربر : @{$user_name}
+    - متن پیام : {$text}";
+
+        sendMessage($bot_admins[0], $msg2, reply_markup: $keyboard_home);
+
+        setStep('home');
+        die;
+    }
 }
