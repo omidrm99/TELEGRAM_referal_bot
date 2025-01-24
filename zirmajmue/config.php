@@ -8,12 +8,12 @@ date_default_timezone_set("Asia/Tehran");
 
 
 // Configuration
-// $bot_admins = [''];
-// $bot_username = '';
-// $bot_channels_id = [
-//     'request' => -0,
-// ];
-
+$bot_admins = [''];
+$bot_username = '';
+$bot_channels_id = [
+    'request' => -0,
+];
+$support_bot = '@Omid_rzy';
 $wallet_add = 0.2;
 
 const DATABASE_HOSTNAME = 'localhost';

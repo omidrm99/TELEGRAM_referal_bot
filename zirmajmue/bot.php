@@ -23,13 +23,9 @@ if (array_key_exists(key: 'message', array: $update)) {
     $date = $message['date'];
     $user = $db->query("SELECT * FROM `users` WHERE `user_id` = $from_id")->fetch_object();
 }
-
-
-
 if ($chat_type != 'private') {
     die;
 }
-
 if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
     if (! isset($user)) {
 
@@ -93,9 +89,6 @@ if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
     sendMessage($from_id, $msg3);
     die;
 }
-
-
-
 if (preg_match('/\/start/', $text, $match)) {
     if (! isset($user)) {
         // ADD NEW USER TO DB
@@ -118,11 +111,61 @@ if (preg_match('/\/start/', $text, $match)) {
 }
 
 
+
+
+$user = $db->query("SELECT * FROM `users` WHERE `user_id` = $from_id")->fetch_object();
 $step = $user->step;
 
 if ($step == 'home') {
-    $msg = '☠️بیا کارت دارم☠️';
+
+    if ($text == '💡 راهنمای ربات') {
+        $msg = 'محل قرار گیری راهنمای ربات';
+        sendMessage($from_id, $msg, reply_markup: $keyboard_home);
+
+
+
+        die;
+    }
+    if ($text == '⁉️ سوالات متداول') {
+        $msg = 'محل قرار گیری سوالات متداول ربات';
+        sendMessage($from_id, $msg, reply_markup: $keyboard_home);
+
+
+        die;
+    }
+    if ($text == '🔐 حساب کاربری') {
+        debug($text);
+        die;
+    }
+    if ($text == '💬 پشتیبانی') {
+        setStep('support');
+
+
+
+        $msg = "🔶 پیام خود را وارد کنید : 
+
+🟥 پیام های شما تا 24 ساعت جواب داده میشوند
+
+⚠️ پشتیبانی مستقیم :
+{$support_bot}";
+
+        sendMessage($from_id, $msg, reply_markup: $keyboard_back);
+
+
+
+        die;
+    }
+    if ($text == '⭐️ زیرمجموعه گیری') {
+        debug($text);
+        die;
+    }
+
+
+
+
+
+    $msg = '❌ دستور مورد نظر یافت نشد 
+لطفا از کیبور استفاده بکنید';
     sendMessage($from_id, $msg, reply_markup: $keyboard_home);
     die;
 }
-debug('end');
