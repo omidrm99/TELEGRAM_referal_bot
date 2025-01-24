@@ -1,7 +1,8 @@
 <?php
 
-const API = '7536953878:AAGm-lCk8BN6Ksc8FyvjQbh9zD21LYImtdw';
-require "DBconfig.php";
+// const API = '7536953878:AAGm-lCk8BN6Ksc8FyvjQbh9zD21LYImtdw';
+require "api.php";
+require "config.php";
 require "jdf.php";
 
 
