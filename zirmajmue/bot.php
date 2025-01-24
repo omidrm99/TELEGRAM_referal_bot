@@ -90,8 +90,8 @@ if (preg_match('/\/start/', $text, $match)) {
     die;
 }
 
-$user = $db->query("SELECT * FROM `users` WHERE `user_id` = $from_id")->fetch_object();
-$step = $user->step;
+
+$step = getStep($from_id);
 
 if ($step == 'home') {
     if ($text == '💡 راهنمای ربات') {
@@ -106,10 +106,11 @@ if ($step == 'home') {
     }
     if ($text == '🔐 حساب کاربری') {
         $wallet = $user->wallet;
+        $referals = $user->referals;
         setStep('account');
         $msg = "🔐 اطلاعات حساب شما : 
 
-🔶 تعداد زیر مجموعه : {$from_id}
+🔶 تعداد زیر مجموعه : {$referals}
 🔶 موجودی حساب : {$wallet}
 
 🔱 با استفاده از دکمه ( برداشت وجه ) میتوانید موجودی حساب خود را برداشت بکنید.
