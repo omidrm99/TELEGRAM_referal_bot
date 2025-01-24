@@ -50,11 +50,16 @@ if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
         $db->query($sql2);
 
         // send message TO (INVITER)
-        $sql3 = "SELECT `user_id` FROM `users` WHERE `referal_code` = '{$user_referal_code}'";
-        $user_invite_data = $db->query($sql3);
-        $user_invite_id = $user_invite_data->fetch_object()->user_id;
-        $user_invite_referals = $user_invite_data->fetch_object()->referals;
-        $user_invite_wallet = $user_invite_data->fetch_object()->wallet;
+        $sql3 = "SELECT `user_id` FROM `users` WHERE `referal_code` = ?";
+        $prepare = $db->prepare($sql3);
+        $user_inviter = $user_inviter_data->fetch_object();
+        $user_inviter_id = $user_inviter->user_id;
+        $user_inviter_referals = $user_inviter->referals;
+        $user_inviter_wallet = $user_inviter->wallet;
+        $prepare->close();
+        $user_inviter_id = $user_inviter_data->fetch_object()->user_id;
+        $user_inviter_referals = $user_inviter_data->fetch_object()->referals;
+        $user_inviter_wallet = $user_inviter_data->fetch_object()->wallet;
 
 
 
@@ -94,8 +99,8 @@ if (preg_match('/\/start/', $text, $match)) {
     die;
 }
 
-
-$step = $user->step;
+$step = isset($user) ? $user->step : null;
+$step = isset($user->step) ? $user->step : null;
 
 if ($step == 'home') {
     $msg = '☠️بیا کارت دارم☠️';
