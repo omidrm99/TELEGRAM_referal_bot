@@ -32,44 +32,37 @@ if ($chat_type != 'private') {
 
 if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
     $user_referal_code = $match[2];
-    if (! isset($user)) {
 
-        // ADD NEW USER TO DB
-        $random_str = generateRandomString();
-        $sql1 = "INSERT INTO `omidreza_zirmajmue`.`users` (`user_id`, `referal_code`) VALUES (?,?)";
-        $prepare = $db->prepare($sql1);
-        $prepare->bind_param('is', $from_id, $random_str);
-        $prepare->execute();
-        $prepare->close();
+    $sql = "SELECT * FROM `users` WHERE `referal_code` = '{$user_referal_code}'";
+    $user_inviter_data = $db->query($sql);
 
-        // UPDATE & ADD REFERAL
-        $sql2 = "UPDATE
-        `users` SET `referals` = `referals` + 1,
-        `wallet` = `wallet` + {$wallet_add}
-        WHERE `referal_code` = '{$user_referal_code}'";
-        $db->query($sql2);
+    if ($user_inviter_data->num_rows) {
+        if (! isset($user)) {
 
-        // send message TO (INVITER)
-        $sql3 = "SELECT `user_id` FROM `users` WHERE `referal_code` = ?";
-        $prepare = $db->prepare($sql3);
-        $user_inviter = $user_inviter_data->fetch_object();
-        $user_inviter_id = $user_inviter->user_id;
-        $user_inviter_referals = $user_inviter->referals;
-        $user_inviter_wallet = $user_inviter->wallet;
-        $prepare->close();
-        $user_inviter_id = $user_inviter_data->fetch_object()->user_id;
-        $user_inviter_referals = $user_inviter_data->fetch_object()->referals;
-        $user_inviter_wallet = $user_inviter_data->fetch_object()->wallet;
+            // ADD NEW USER TO DB
+            $random_str = generateRandomString();
+            $sql1 = "INSERT INTO `omidreza_zirmajmue`.`users` (`user_id`, `referal_code`) VALUES (?,?)";
+            $prepare = $db->prepare($sql1);
+            $prepare->bind_param('is', $from_id, $random_str);
+            $prepare->execute();
+            $prepare->close();
 
+            // UPDATE & ADD REFERAL
+            $sql2 = "UPDATE
+            `users` SET `referals` = `referals` + 1,
+            `wallet` = `wallet` + {$wallet_add}
+            WHERE `referal_code` = '{$user_referal_code}'";
+            $db->query($sql2);
 
-
-
-        $msg2 = "🥂یک نفر رقرال گرفتی\n" .
-            "آیدی عددیش : `{$from_id}`\n" .
-            "یوزر نیم : @{$user_name}\n" .
-            "اسمش : `{$first_name}`";
-        sendMessage($user_invite_id, $msg2, parse_mode: 'Markdown');
-        die;
+            // send message TO (INVITER)
+            $user_inviter_id = $user_inviter_data->fetch_object()->user_id;
+            $user_inviter_referals = $user_inviter_data->fetch_object()->referals;
+            $user_inviter_wallet = $user_inviter_data->fetch_object()->wallet;
+        
+            
+            $msg2 = "🥂یک نفر رقرال گرفتی\nیوزر نیم : @{$user_name}\nاسمش : {$first_name}";
+            sendMessage($user_inviter_id, $msg2);
+        }
     }
 
     //send message to invited (NEW) user
@@ -90,6 +83,7 @@ if (preg_match('/\/start/', $text, $match)) {
         $prepare->close();
         $msg = 'سلام خوش اومدی ! 🌚';
         sendMessage($from_id, $msg);
+        die;
     }
 
     //send message to new (NOT INVITED) user
@@ -99,8 +93,8 @@ if (preg_match('/\/start/', $text, $match)) {
     die;
 }
 
-$step = isset($user) ? $user->step : null;
-$step = isset($user->step) ? $user->step : null;
+
+$step = $user->step;
 
 if ($step == 'home') {
     $msg = '☠️بیا کارت دارم☠️';
