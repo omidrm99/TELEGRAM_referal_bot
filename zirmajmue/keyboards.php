@@ -50,6 +50,7 @@ $keyboard_back = json_encode(
             [['text' => '🔙 بازگشت']],
         ],
         'resize_keyboard' => true,
+        'is_persistent' => true
     ]
 );
 $keyboard_admin = json_encode(
