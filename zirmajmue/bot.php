@@ -171,7 +171,6 @@ if ($step == 'account') {
             }
             if ($balance_request_data->status == 'pending') {
                 $db->query("DELETE FROM `balance_request` WHERE `user_id` = $from_id");
-                die;
             }
         }
 
