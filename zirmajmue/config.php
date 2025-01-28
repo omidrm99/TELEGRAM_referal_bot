@@ -9,9 +9,11 @@ date_default_timezone_set("Asia/Tehran");
 
 // Configuration
 $bot_admins = ['207850708'];
-$bot_username = '';
+$bot_username = 'zirmajmuebot';
 $bot_channels_id = [
-    'request' => -0,
+    'main' => -0,
+    'support' => -0,
+    'request' => -1002422786228,
 ];
 $support_bot = ['@Omid_rzy'];
 $wallet_add = 0.2;

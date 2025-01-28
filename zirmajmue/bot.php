@@ -22,6 +22,36 @@ if (array_key_exists(key: 'message', array: $update)) {
 if ($chat_type != 'private') {
     die;
 }
+$error_msg = '❌ دستور مورد نظر یافت نشد 
+لطفا از کیبور استفاده بکنید';
+if (preg_match('/^(\/start) confirm_(.*)/', $text, $match)) {
+    if (!in_array($from_id, $bot_admins)) {
+        sendMessage($from_id, $error_msg);
+        setStep('home');
+        die;
+    }
+
+
+    $status = 'done';
+    $balance_request_id = $match[2];
+
+    $v = $db->query("SELECT * FROM `balance_request` WHERE  `id` =$balance_request_id")->fetch_object();
+
+    $balance_request_user_id = $v->user_id;
+
+    $sql = "UPDATE `balance_request` SET `status` = ? WHERE `id` = ? ";
+    $prepare = $db->prepare($sql);
+    $prepare->bind_Param("si", $status, $balance_request_id);
+    $prepare->execute();
+    $prepare->close();
+
+    $msg1 = 'واریز تایید شد';
+    sendMessage($from_id, $msg1);
+    setStep('home');
+    $msg2 = 'واریز موفق بود';
+    sendMessage($balance_request_user_id, $msg2);
+    die;
+}
 if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
     if (!isset($user)) {
         // ADD NEW USER TO DB
@@ -137,8 +167,6 @@ if ($step == 'home') {
         die;
     }
 
-    $error_msg = '❌ دستور مورد نظر یافت نشد 
-لطفا از کیبور استفاده بکنید';
     sendMessage($from_id, $error_msg, reply_markup: $keyboard_home);
     die;
 }
@@ -189,8 +217,6 @@ if ($step == 'account') {
         setStep('account_wallet');
         die;
     }
-    $error_msg = '❌ دستور مورد نظر یافت نشد 
-لطفا از کیبور استفاده بکنید';
     sendMessage($from_id, $error_msg, reply_markup: $keyboard_account);
     die;
 }
@@ -253,7 +279,7 @@ if ($step == 'account_balance') {
     $prepare->close();
 
 
-    $balance_request = $db->query("SELECT * FROM `balance_request` WHERE `user_id` = $from_id")->fetch_object();
+    $balance_request = $db->query("SELECT * FROM `balance_request` WHERE `user_id` = $from_id AND `status` = 'pending'")->fetch_object();
     $balance = $balance_request->balance;
     $wallet_address = $balance_request->wallet_address;
     $created_at = $balance_request->created_at;
@@ -270,31 +296,72 @@ if ($step == 'account_balance') {
     sendMessage($from_id, $msg, reply_markup: $keyboard_account_balance_confirm);
 
 
-    setStep('keyboard_account_balance_confirm');
+    setStep('account_balance_confirm');
     die;
 }
-if ($step == 'keyboard_account_balance_confirm') {
+if ($step == 'account_balance_confirm') {
     if ($text == '🔙 بازگشت') {
         $msg = 'منوی اصلی';
         sendMessage($from_id, $msg, reply_markup: $keyboard_home);
         setStep('home');
         die;
     }
+
+
     if ($text === '✅ تایید نهایی درخواست') {
+
         $status = 'registered';
-        $amount = 10;
         $sql = "UPDATE `balance_request` SET `status` = ? WHERE `user_id` = ?";
         $prepare = $db->prepare($sql);
-        $prepare->bind_Param("si", $status,$from_id);
+        $prepare->bind_Param("si", $status, $from_id);
         $prepare->execute();
         $prepare->close();
-        $msg = "🟢 درخواست برداشت {$amount} تتر با موفقیت ثبت شد";
-        sendMessage($from_id, $msg, reply_markup: $keyboard_home);
-        setStep('home');
+
+        $balance_request =  $db->query("SELECT * FROM `balance_request` WHERE `user_id` = $from_id AND `status` = 'registered'")->fetch_object();
+
+        $balance = $balance_request->balance;
+        $wallet_address = $balance_request->wallet_address;
+        $created_at = convertDateToJalali($balance_request->created_at);
+        $balance_request_id = $balance_request->id;
+
+        $msg1 = "🔸ثبت درخواست برداشت وجه : 
+
+♦️ آیدی عددی کاربر : {$from_id}
+♦️ مبلغ درخواستی : {$balance} تتر
+♦️ آدرس ولت : `{$wallet_address}` 
+♦️ تاریخ ثبت درخواست : 
+{$created_at}
+
+@$bot_username";
+
+
+
+
+
+        $keyboard_confirm_balance = json_encode(
+            [
+                'inline_keyboard' => [
+                    [['text' => '✅ تایید واریز', 'url' => "https://t.me/{$bot_username}/?start=confirm_{$balance_request_id}"]],
+                    [['text' => '❌ لغو واریز', 'url' => "https://t.me/{$bot_username}/?start=cancel_{$balance_request_id}"]],
+                ],
+                'resize_keyboard' => true,
+            ]
+        );
+
+
+
+
+
+        sendMessage($bot_channels_id['request'], $msg1, parse_mode: 'Markdown', reply_markup: $keyboard_confirm_balance);
+
+
+        $msg2 = "🟢 درخواست برداشت {$amount} تتر با موفقیت ثبت شد";
+        sendMessage($from_id, $msg2);
+
+        // sendMessage($from_id, $msg, reply_markup: $keyboard_home);
+        // setStep('home');
         die;
     }
-    $error_msg = '❌ دستور مورد نظر یافت نشد 
-لطفا از کیبور استفاده بکنید';
     sendMessage($from_id, $error_msg, reply_markup: $keyboard_account_balance_confirm);
     die;
 }
