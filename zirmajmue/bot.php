@@ -31,10 +31,8 @@ if (preg_match('/^(\/start) confirm_(.*)/', $text, $match)) {
         die;
     }
 
-
     $status = 'done';
     $balance_request_id = $match[2];
-
     $v = $db->query("SELECT * FROM `balance_request` WHERE  `id` =$balance_request_id")->fetch_object();
 
     $balance_request_user_id = $v->user_id;
@@ -46,7 +44,7 @@ if (preg_match('/^(\/start) confirm_(.*)/', $text, $match)) {
     $prepare->close();
 
     $msg1 = 'واریز تایید شد';
-    sendMessage($from_id, $msg1);
+    sendMessage($from_id, $msg1,reply_markup:$keyboard_home);
     setStep('home');
     $msg2 = 'واریز موفق بود';
     sendMessage($balance_request_user_id, $msg2);
@@ -202,7 +200,6 @@ if ($step == 'account') {
             }
         }
 
-
         $msg = "🔶 موجودی حساب شما : {$user->wallet} تتر
         قصد دارید چه مقدار برداشت بکنید ";
         sendMessage($from_id, $msg, reply_markup: $keyboard_back);
@@ -311,7 +308,7 @@ if ($step == 'account_balance_confirm') {
     if ($text === '✅ تایید نهایی درخواست') {
 
         $status = 'registered';
-        $sql = "UPDATE `balance_request` SET `status` = ? WHERE `user_id` = ?";
+        $sql = "UPDATE `balance_request` SET `status` = ? WHERE `user_id` = ? AND `status` = 'pending'";
         $prepare = $db->prepare($sql);
         $prepare->bind_Param("si", $status, $from_id);
         $prepare->execute();
@@ -334,10 +331,6 @@ if ($step == 'account_balance_confirm') {
 
 @$bot_username";
 
-
-
-
-
         $keyboard_confirm_balance = json_encode(
             [
                 'inline_keyboard' => [
@@ -348,18 +341,13 @@ if ($step == 'account_balance_confirm') {
             ]
         );
 
-
-
-
-
         sendMessage($bot_channels_id['request'], $msg1, parse_mode: 'Markdown', reply_markup: $keyboard_confirm_balance);
 
 
-        $msg2 = "🟢 درخواست برداشت {$amount} تتر با موفقیت ثبت شد";
-        sendMessage($from_id, $msg2);
+        $msg2 = "🟢 درخواست برداشت {$balance} تتر با موفقیت ثبت شد";
+        sendMessage($from_id, $msg2, reply_markup: $keyboard_hme);
 
-        // sendMessage($from_id, $msg, reply_markup: $keyboard_home);
-        // setStep('home');
+        setStep('home');
         die;
     }
     sendMessage($from_id, $error_msg, reply_markup: $keyboard_account_balance_confirm);
