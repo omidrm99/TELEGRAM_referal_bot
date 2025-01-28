@@ -215,8 +215,8 @@ if ($step == 'account_wallet') {
     $prepare->execute();
     $prepare->close();
     $msg = '🟢 آدرس ولت شما با موفقیت ثبت شد';
-    sendMessage($from_id, $msg, reply_markup: $keyboard_home);
-    setStep('home');
+    sendMessage($from_id, $msg, reply_markup: $keyboard_account);
+    setStep('account');
     die;
 }
 if ($step == 'account_balance') {
@@ -281,12 +281,11 @@ if ($step == 'keyboard_account_balance_confirm') {
         die;
     }
     if ($text === '✅ تایید نهایی درخواست') {
-        $amount = $update['message']['message_id'];
-        debug($update);
-        die;
-        $sql = "UPDATE `users` SET `wallet` = `wallet` - ? WHERE `user_id` = ?";
+        $status = 'registered';
+        $amount = 10;
+        $sql = "UPDATE `balance_request` SET `status` = ? WHERE `user_id` = ?";
         $prepare = $db->prepare($sql);
-        $prepare->bind_Param("di", $amount, $from_id);
+        $prepare->bind_Param("si", $status,$from_id);
         $prepare->execute();
         $prepare->close();
         $msg = "🟢 درخواست برداشت {$amount} تتر با موفقیت ثبت شد";
