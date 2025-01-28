@@ -31,29 +31,29 @@ if (preg_match('/^(\/start) confirm_(.*)/', $text, $match)) {
         die;
     }
 
-    
+
     $balance_request_id = $match[2];
     $v = $db->query("SELECT * FROM `balance_request` WHERE  `id` =$balance_request_id")->fetch_object();
-    
-    if($v->status == 'done') {
+
+    if ($v->status == 'done') {
         $msg = "درخواست واریزی {$balance_request_id} قبلا تایید شده";
         sendMessage($from_id, $msg);
         die;
     }
-    
+
     $status = 'done';
     $balance_request_user_id = $v->user_id;
     $balance_request_balance = $v->balance;
-    
+
     $sql = "UPDATE `users` SET `wallet` = `wallet` - ? WHERE `id` = ? ";
     $prepare = $db->prepare($sql);
     $prepare->bind_Param("ii", $balance_request_balance, $balance_request_user_id);
     $prepare->execute();
     $prepare->close();
-    
+
     debug($sql);
     die;
-    
+
 
     $sql = "UPDATE `balance_request` SET `status` = ? WHERE `id` = ? ";
     $prepare = $db->prepare($sql);
@@ -61,16 +61,16 @@ if (preg_match('/^(\/start) confirm_(.*)/', $text, $match)) {
     $prepare->execute();
     $prepare->close();
 
-debug('yes');
-die;
+    debug('yes');
+    die;
     $msg1 = 'واریز تایید شد';
-    sendMessage($from_id, $msg1,reply_markup:$keyboard_home);
+    sendMessage($from_id, $msg1, reply_markup: $keyboard_home);
     setStep('home');
     $msg2 = 'واریز موفق بود';
     sendMessage($balance_request_user_id, $msg2);
     $msg3 = "ذرخواست واریز شناسه {$balance_request_id} تایید شد !";
 
-        sendMessage($bot_channels_id['request'], $msg3);
+    sendMessage($bot_channels_id['request'], $msg3);
     die;
 }
 if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
@@ -210,17 +210,12 @@ if ($step == 'account') {
             die;
         }
 
-        $balance_request = $db->query("SELECT * FROM `balance_request` WHERE `user_id` = $from_id AND `status` = 'registered'");
-        
-        if ($balance_request->num_rows) {
-            $balance_request_data = $balance_request->fetch_object();
-            debug($balance_request_data);
-        die;
-            if ($balance_request_data->status == 'registered') {
-                $msg = '🔴 شما قبلا درخواست برداشت ثبت کرده اید';
-                sendMessage($from_id, $msg, reply_markup: $keyboard_account);
-                die;
-            }
+        $balance_request = $db->query("SELECT * FROM `balance_request` WHERE `user_id` = $from_id AND `status` = 'registered'")->fetch_object();
+
+        if (isset($balance_request)) {
+            $msg = '🔴 شما قبلا درخواست برداشت ثبت کرده اید';
+            sendMessage($from_id, $msg, reply_markup: $keyboard_account);
+            die;
             if ($balance_request_data->status == 'pending') {
                 $db->query("DELETE FROM `balance_request` WHERE `user_id` = $from_id");
             }
@@ -368,7 +363,7 @@ if ($step == 'account_balance_confirm') {
         );
 
         sendMessage($bot_channels_id['request'], $msg1, parse_mode: 'Markdown', reply_markup: $keyboard_confirm_balance);
-        
+
 
         $msg2 = "🟢 درخواست برداشت {$balance} تتر با موفقیت ثبت شد";
         sendMessage($from_id, $msg2, reply_markup: $keyboard_home);
