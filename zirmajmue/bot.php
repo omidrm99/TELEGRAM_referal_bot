@@ -45,14 +45,11 @@ if (preg_match('/^(\/start) confirm_(.*)/', $text, $match)) {
     $balance_request_user_id = $v->user_id;
     $balance_request_balance = $v->balance;
 
-    $sql = "UPDATE `users` SET `wallet` = `wallet` - ? WHERE `id` = ? ";
-    $prepare = $db->prepare($sql);
-    $prepare->bind_Param("ii", $balance_request_balance, $balance_request_user_id);
-    $prepare->execute();
-    $prepare->close();
+    $sql = "UPDATE `users` SET `wallet` = `wallet` - $balance_request_balance WHERE `user_id` =$balance_request_user_id";
+    $db->query($sql);
 
-    debug($sql);
-    die;
+
+
 
 
     $sql = "UPDATE `balance_request` SET `status` = ? WHERE `id` = ? ";
@@ -61,16 +58,17 @@ if (preg_match('/^(\/start) confirm_(.*)/', $text, $match)) {
     $prepare->execute();
     $prepare->close();
 
-    debug('yes');
-    die;
-    $msg1 = 'واریز تایید شد';
-    sendMessage($from_id, $msg1, reply_markup: $keyboard_home);
+    $msg = 'واریز تایید شد';
+    sendMessage($from_id, $msg, reply_markup: $keyboard_home);
+    
     setStep('home');
-    $msg2 = 'واریز موفق بود';
-    sendMessage($balance_request_user_id, $msg2);
-    $msg3 = "ذرخواست واریز شناسه {$balance_request_id} تایید شد !";
+    $msg = 'واریز موفق بود';
+    
+    sendMessage($balance_request_user_id, $msg);
+    $msg = "ذرخواست واریز شناسه {$balance_request_id} تایید شد !";
 
-    sendMessage($bot_channels_id['request'], $msg3);
+    sendMessage($bot_channels_id['request'], $msg);
+
     die;
 }
 if (preg_match('/^(\/start) inv_(.*)/', $text, $match)) {
