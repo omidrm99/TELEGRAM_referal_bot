@@ -208,17 +208,15 @@ if ($step == 'account') {
             die;
         }
 
-        $balance_request = $db->query("SELECT * FROM `balance_request` WHERE `user_id` = $from_id AND `status` = 'registered'")->fetch_object();
-
-        if (isset($balance_request)) {
+        $balance_request = $db->query("SELECT * FROM `balance_request` WHERE `user_id` = $from_id AND `status` != 'done'")->fetch_object();
+        if ($balance_request->status == 'registered') {
             $msg = '🔴 شما قبلا درخواست برداشت ثبت کرده اید';
             sendMessage($from_id, $msg, reply_markup: $keyboard_account);
             die;
-            if ($balance_request_data->status == 'pending') {
-                $db->query("DELETE FROM `balance_request` WHERE `user_id` = $from_id");
-            }
         }
-
+        if ($balance_request->status == 'pending') {
+            $db->query("DELETE FROM `balance_request` WHERE `user_id` = $from_id AND `status` = 'pending'");
+        }
         $msg = "🔶 موجودی حساب شما : {$user->wallet} تتر
         قصد دارید چه مقدار برداشت بکنید ";
         sendMessage($from_id, $msg, reply_markup: $keyboard_back);
@@ -243,6 +241,15 @@ if ($step == 'support') {
         setStep('home');
         die;
     }
+$msg = 'پیام شما ارسال شد
+تا 24 ساعت بهتون جواب میدیم';
+$msg_admin = "یک پیام پشتیبانی ارسال شده
+متن پیام : {$text}
+آیدی عددی فرستنده : {$user_id}";
+sendMessage($bot_admins[0],$text);
+sendMessage($from_id, $msg, reply_markup: $keyboard_home);
+setStep('home');
+    die;
 }
 if ($step == 'account_wallet') {
     if ($text == '🔙 بازگشت') {
