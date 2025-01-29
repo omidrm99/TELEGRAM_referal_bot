@@ -18,6 +18,8 @@ $bot_channels_id = [
 $support_bot = ['@Omid_rzy'];
 $wallet_add = 0.2;
 
+$photo_banner = 'https://omidrezayi.ir/zirmajmue/photo/9947040.jpg';
+
 const DATABASE_HOSTNAME = 'localhost';
 const DATABASE_USERNAME = 'omidreza_omidreza';
 const DATABASE_PASSWORD = 'o=-dzqoJLBI2';
