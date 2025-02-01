@@ -156,18 +156,35 @@ if ($step == 'home') {
     }
     if ($text == '🔐 حساب کاربری') {
         $wallet = $user->wallet;
+        $wallet_address = $user->wallet_address;
         $referals = $user->referals;
         setStep('account');
-        $msg = "🔐 اطلاعات حساب شما : 
 
-🔶 تعداد زیر مجموعه : {$referals}
-🔶 موجودی حساب : {$wallet}
 
-🔱 با استفاده از دکمه ( برداشت وجه ) میتوانید موجودی حساب خود را برداشت بکنید.
+        if (isset($wallet_address)) {
+            $msg = "🔐 اطلاعات حساب شما : 
 
-@zirmajmuebot";
-        sendMessage($from_id, $msg, reply_markup: $keyboard_account);
-        die;
+    🔶 تعداد زیر مجموعه : {$referals}
+    🔶 موجودی حساب : {$wallet}
+    🔶 آدرس ولت شما : {$wallet_address}
+    🔱 با استفاده از دکمه ( برداشت وجه ) میتوانید موجودی حساب خود را برداشت بکنید.
+    
+    @zirmajmuebot";
+            sendMessage($from_id, $msg, reply_markup: $keyboard_account_wallet);
+            die;
+        } else {
+            $msg = "🔐 اطلاعات حساب شما : 
+
+    🔶 تعداد زیر مجموعه : {$referals}
+    🔶 موجودی حساب : {$wallet}
+     
+    
+    🔱 با استفاده از دکمه ( برداشت وجه ) میتوانید موجودی حساب خود را برداشت بکنید.
+    
+    @zirmajmuebot";
+            sendMessage($from_id, $msg, reply_markup: $keyboard_account);
+            die;
+        }
     }
     if ($text == '💬 پشتیبانی') {
         setStep('support');
@@ -185,7 +202,7 @@ if ($step == 'home') {
         $referal_code = $user->referal_code;
         $msg_caption = "لینک زیر مجموعه گیر شما
         https://t.me/{$bot_username}/?start=inv_{$referal_code}";
-        sendPhoto($from_id,$photo_banner,caption:$msg_caption);
+        sendPhoto($from_id, $photo_banner, caption: $msg_caption, protect_content: false);
         die;
     }
 
@@ -234,6 +251,15 @@ if ($step == 'account') {
         setStep('account_wallet');
         die;
     }
+    if ($text == '💷 تغییر آدرس ولت') {
+        $msg = '🔻 آدرس ولت (جدید) خودتون رو وارد بکنید 
+
+⚠️ آدرس ولت وارد شده باید برای USDT و بر بستر trc20 باشد';
+
+        sendMessage($from_id, $msg, reply_markup: $keyboard_account);
+        setStep('account_wallet');
+        die;
+    }
     sendMessage($from_id, $error_msg, reply_markup: $keyboard_account);
     die;
 }
@@ -244,21 +270,24 @@ if ($step == 'support') {
         setStep('home');
         die;
     }
+
     $msg = 'پیام شما ارسال شد
 تا 24 ساعت بهتون جواب میدیم';
     $msg_admin = "یک پیام پشتیبانی ارسال شده
 متن پیام : {$text}
-آیدی عددی فرستنده : {$user_id}";
-    sendMessage($bot_admins[0], $text);
+آیدی عددی فرستنده : {$from_id}";
+
+
+    sendMessage($bot_admins[0], $msg_admin);
     sendMessage($from_id, $msg, reply_markup: $keyboard_home);
     setStep('home');
     die;
 }
 if ($step == 'account_wallet') {
     if ($text == '🔙 بازگشت') {
-        $msg = 'منوی اصلی';
-        sendMessage($from_id, $msg, reply_markup: $keyboard_home);
-        setStep('home');
+        $msg = 'برگشتید به حساب کاربری';
+        sendMessage($from_id, $msg, reply_markup: $keyboard_account);
+        setStep('account');
         die;
     }
     $sql = "UPDATE `users` SET `wallet_address` = ? WHERE `user_id` = ?";
