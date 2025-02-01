@@ -60,10 +60,10 @@ if (preg_match('/^(\/start) confirm_(.*)/', $text, $match)) {
 
     $msg = 'واریز تایید شد';
     sendMessage($from_id, $msg, reply_markup: $keyboard_home);
-    
+
     setStep('home');
     $msg = 'واریز موفق بود';
-    
+
     sendMessage($balance_request_user_id, $msg);
     $msg = "ذرخواست واریز شناسه {$balance_request_id} تایید شد !";
 
@@ -182,7 +182,10 @@ if ($step == 'home') {
         die;
     }
     if ($text == '⭐️ زیرمجموعه گیری') {
-        debug($text);
+        $referal_code = $user->referal_code;
+        $msg_caption = "لینک زیر مجموعه گیر شما
+        https://t.me/{$bot_username}/?start=inv_{$referal_code}";
+        sendPhoto($from_id,$photo_banner,caption:$msg_caption);
         die;
     }
 
@@ -241,14 +244,14 @@ if ($step == 'support') {
         setStep('home');
         die;
     }
-$msg = 'پیام شما ارسال شد
+    $msg = 'پیام شما ارسال شد
 تا 24 ساعت بهتون جواب میدیم';
-$msg_admin = "یک پیام پشتیبانی ارسال شده
+    $msg_admin = "یک پیام پشتیبانی ارسال شده
 متن پیام : {$text}
 آیدی عددی فرستنده : {$user_id}";
-sendMessage($bot_admins[0],$text);
-sendMessage($from_id, $msg, reply_markup: $keyboard_home);
-setStep('home');
+    sendMessage($bot_admins[0], $text);
+    sendMessage($from_id, $msg, reply_markup: $keyboard_home);
+    setStep('home');
     die;
 }
 if ($step == 'account_wallet') {
