@@ -61,6 +61,13 @@ if ($text == '⭐️ زیرمجموعه گیری') {
     sendPhoto($from_id, $photo_banner, caption: $msg_caption, protect_content: false);
     die;
 }
-
+if ($text == 'مدیریت'){
+    if ($from_id == $bot_admins[0]){
+        setStep('admin');
+        $msg = 'به بخش ادمین خوش آمدید';
+        sendMessage($from_id,$msg,reply_markup:$keyboard_admin);
+        die;
+    }   
+}
 sendMessage($from_id, $error_msg, reply_markup: $keyboard_home);
 die;

@@ -158,3 +158,6 @@ if ($step == 'account_balance_confirm') {
     sendMessage($from_id, $error_msg, reply_markup: $keyboard_account_balance_confirm);
     die;
 }
+if ($step == 'admin') {
+    require "step/admin.php";
+}
