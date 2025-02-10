@@ -30,5 +30,11 @@ if ($text == 'اطلاعات کاربر') {
     setStep('admin_userinfo');
     die;
 }
+
+
+if ($text == 'آمار ربات') {
+    require "admin_botinfo.php";
+    die;
+}
 sendMessage($from_id, $error_msg);
 die;
