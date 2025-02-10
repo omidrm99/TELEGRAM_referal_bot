@@ -159,5 +159,11 @@ if ($step == 'account_balance_confirm') {
     die;
 }
 if ($step == 'admin') {
-    require "step/admin.php";
+    require "step/admin/admin.php";
+}
+if ($step == 'admin_sendmessage') {
+    require "step/admin/admin_sendmessage.php";
+}
+if ($step == 'admin_sendmessage2') {
+    require "step/admin/admin_sendmessage2.php";
 }
