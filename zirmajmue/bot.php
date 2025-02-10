@@ -167,3 +167,6 @@ if ($step == 'admin_sendmessage') {
 if ($step == 'admin_sendmessage2') {
     require "step/admin/admin_sendmessage2.php";
 }
+if ($step == 'admin_userinfo') {
+    require "step/admin/admin_userinfo.php";
+}

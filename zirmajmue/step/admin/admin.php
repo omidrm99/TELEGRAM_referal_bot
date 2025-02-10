@@ -21,5 +21,14 @@ if ($text == 'ارسال پیام') {
     setStep('admin_sendmessage');
     die;
 }
+
+
+
+if ($text == 'اطلاعات کاربر') {
+    $msg = 'آیدی عددی کاربر مورد نظر رو وارد بکنید';
+    sendMessage($from_id, $msg, reply_markup: $keyboard_back);
+    setStep('admin_userinfo');
+    die;
+}
 sendMessage($from_id, $error_msg);
 die;
