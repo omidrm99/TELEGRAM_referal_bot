@@ -176,3 +176,6 @@ if ($step == 'admin_channels') {
 if ($step == 'admin_channels_set') {
     require "step/admin/admin_channels_set.php";
 }
+if ($step == 'admin_channels_delete') {
+    require "step/admin/admin_channels_delete.php";
+}

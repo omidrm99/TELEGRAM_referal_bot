@@ -22,3 +22,10 @@ if ($text == 'افزودن کانال') {
     setStep('admin_channels_set');
     die;
 }
+
+if ($text == 'حذف کانال') {
+    $msg = '🔻 برای حذف کانال آیدی عددی کانال را وارد کنید';
+    sendMessage($from_id, $msg, reply_markup: $keyboard_back);
+    setStep('admin_channels_delete');
+    die;
+}
