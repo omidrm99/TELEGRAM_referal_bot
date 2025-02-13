@@ -173,3 +173,6 @@ if ($step == 'admin_userinfo') {
 if ($step == 'admin_channels') {
     require "step/admin/admin_channels.php";
 }
+if ($step == 'admin_channels_set') {
+    require "step/admin/admin_channels_set.php";
+}
