@@ -36,5 +36,13 @@ if ($text == 'آمار ربات') {
     require "admin_botinfo.php";
     die;
 }
+
+if ($text == 'تنظیم کانال ها') {
+    $msg = 'بخش مدیریت کانال ها';
+    sendMessage($from_id, $msg, reply_markup: $keyboard_admin_channel);
+    setStep('admin_channels');
+    die;
+}
+
 sendMessage($from_id, $error_msg);
 die;

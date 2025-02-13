@@ -170,3 +170,6 @@ if ($step == 'admin_sendmessage2') {
 if ($step == 'admin_userinfo') {
     require "step/admin/admin_userinfo.php";
 }
+if ($step == 'admin_channels') {
+    require "step/admin/admin_channels.php";
+}
