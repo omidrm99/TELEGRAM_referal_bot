@@ -17,6 +17,7 @@ if ($chat_type != 'private') {
 $error_msg = '❌ دستور مورد نظر یافت نشد 
 لطفا از کیبور استفاده بکنید';
 
+require "inc/checkjoin.php";
 require "view/start.php";
 
 $step = getStep($from_id);
