@@ -8,5 +8,15 @@ if ($text == '🔙 بازگشت') {
     die;
 }
 
-debug($text);
+
+if (!is_numeric($text)) {
+    $msg = 'آیدی عددی باید عدد باشد';
+    sendMessage($from_id, $msg);
+    die;
+}
+$db->query("DELETE FROM `channel` WHERE `chanel_id` = $text");
+
+$msg = 'کانال حذف شد';
+sendMessage($from_id, $msg);
+
 die;
