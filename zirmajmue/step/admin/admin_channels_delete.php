@@ -14,7 +14,7 @@ if (!is_numeric($text)) {
     sendMessage($from_id, $msg);
     die;
 }
-$db->query("DELETE FROM `channel` WHERE `chanel_id` = $text");
+$db->query("DELETE FROM `channel` WHERE `channel_id` = $text");
 
 $msg = 'کانال حذف شد';
 sendMessage($from_id, $msg);

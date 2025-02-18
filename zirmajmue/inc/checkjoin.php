@@ -17,5 +17,3 @@ if ($status == 'left') {
     sendMessage($from_id, $msg);
 }
 
-debug('end of code');
-die;
