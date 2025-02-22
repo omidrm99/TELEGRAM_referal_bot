@@ -17,3 +17,4 @@ if ($status == 'left') {
     sendMessage($from_id, $msg);
 }
 
+ die;
